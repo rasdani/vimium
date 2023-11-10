@@ -257,6 +257,16 @@ const HintCoordinator = {
       this.onExit = [];
     }
     this.linkHintsMode = new LinkHintsMode(hintDescriptors, availableModes[modeIndex]);
+    console.log('this.localHints', this.localHints)
+    const rectangleCoordinatesArray = this.localHints.map(hint => hint.rect);
+    const markers = this.linkHintsMode.hintMarkers;
+    console.log('markers', markers)
+    const hintStringArray = markers.map(marker => marker.hintString);
+    const hintStringToRectangleCoordinates = {};
+    for (let i = 0; i < hintStringArray.length; i++) {
+      hintStringToRectangleCoordinates[hintStringArray[i]] = rectangleCoordinatesArray[i];
+    }
+    console.log('hintStringToRectangleCoordinates', hintStringToRectangleCoordinates)
     // Replay keydown events which we missed (but for filtered hints only).
     if (Settings.get("filterLinkHints" && this.cacheAllKeydownEvents)) {
       this.cacheAllKeydownEvents.replayKeydownEvents();
