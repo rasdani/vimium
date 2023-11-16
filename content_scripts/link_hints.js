@@ -261,18 +261,18 @@ const HintCoordinator = {
     // Exfiltrate hint markers and coordinates of clickable elements
     const rectangleCoordinatesArray = this.localHints.map(hint => hint.rect);
     // Add boxes at the four corners to the rectangleCoordinatesArray
-    rectangleCoordinatesArray.push({ top: 0, left: 0, right: 10, bottom: 10, width: 10, height: 10 }); // Top left
-    rectangleCoordinatesArray.push({ top: 0, left: window.innerWidth - 10, right: window.innerWidth, bottom: 10, width: 10, height: 10 }); // Top right
-    rectangleCoordinatesArray.push({ top: window.innerHeight - 10, left: 0, right: 10, bottom: window.innerHeight, width: 10, height: 10 }); // Bottom left
-    rectangleCoordinatesArray.push({ top: window.innerHeight - 10, left: window.innerWidth - 10, right: window.innerWidth, bottom: window.innerHeight, width: 10, height: 10 }); // Bottom right
+    // rectangleCoordinatesArray.push({ top: 0, left: 0, right: 10, bottom: 10, width: 10, height: 10 }); // Top left
+    // rectangleCoordinatesArray.push({ top: 0, left: window.innerWidth - 10, right: window.innerWidth, bottom: 10, width: 10, height: 10 }); // Top right
+    // rectangleCoordinatesArray.push({ top: window.innerHeight - 10, left: 0, right: 10, bottom: window.innerHeight, width: 10, height: 10 }); // Bottom left
+    // rectangleCoordinatesArray.push({ top: window.innerHeight - 10, left: window.innerWidth - 10, right: window.innerWidth, bottom: window.innerHeight, width: 10, height: 10 }); // Bottom right
 
     const markers = this.linkHintsMode.hintMarkers;
     const hintStringArray = markers.map(marker => marker.hintString);
     // Add keys for the four corners to the hintStringArray
-    hintStringArray.push('00'); // Top left
-    hintStringArray.push('01'); // Top right
-    hintStringArray.push('10'); // Bottom left
-    hintStringArray.push('11'); // Bottom right
+    // hintStringArray.push('00'); // Top left
+    // hintStringArray.push('01'); // Top right
+    // hintStringArray.push('10'); // Bottom left
+    // hintStringArray.push('11'); // Bottom right
 
     const hintStringToRectangleCoordinates = {};
     for (let i = 0; i < hintStringArray.length; i++) {
