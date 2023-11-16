@@ -260,19 +260,9 @@ const HintCoordinator = {
 
     // Exfiltrate hint markers and coordinates of clickable elements
     const rectangleCoordinatesArray = this.localHints.map(hint => hint.rect);
-    // Add boxes at the four corners to the rectangleCoordinatesArray
-    // rectangleCoordinatesArray.push({ top: 0, left: 0, right: 10, bottom: 10, width: 10, height: 10 }); // Top left
-    // rectangleCoordinatesArray.push({ top: 0, left: window.innerWidth - 10, right: window.innerWidth, bottom: 10, width: 10, height: 10 }); // Top right
-    // rectangleCoordinatesArray.push({ top: window.innerHeight - 10, left: 0, right: 10, bottom: window.innerHeight, width: 10, height: 10 }); // Bottom left
-    // rectangleCoordinatesArray.push({ top: window.innerHeight - 10, left: window.innerWidth - 10, right: window.innerWidth, bottom: window.innerHeight, width: 10, height: 10 }); // Bottom right
 
     const markers = this.linkHintsMode.hintMarkers;
     const hintStringArray = markers.map(marker => marker.hintString);
-    // Add keys for the four corners to the hintStringArray
-    // hintStringArray.push('00'); // Top left
-    // hintStringArray.push('01'); // Top right
-    // hintStringArray.push('10'); // Bottom left
-    // hintStringArray.push('11'); // Bottom right
 
     const hintStringToRectangleCoordinates = {};
     for (let i = 0; i < hintStringArray.length; i++) {
@@ -301,22 +291,6 @@ const HintCoordinator = {
       box.style.boxSizing = 'border-box';
       box.style.pointerEvents = 'none';
       document.body.appendChild(box);
-
-    //   // Take a "screenshot" with html2canvas
-    //   html2canvas(document.body).then(canvas => {
-    //     // Convert the canvas to a Base64 string
-    //     const base64image = canvas.toDataURL("image/png");
-
-    //     // Send the image to the server
-    //     fetch('http://localhost:5000/save_image', {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json'
-    //       },
-    //       body: JSON.stringify({ image: base64image, index: index })
-    //     }).catch(error => console.error('Error:', error));
-      // });
-
     });
 
     // Replay keydown events which we missed (but for filtered hints only).
@@ -351,11 +325,6 @@ const HintCoordinator = {
       this.onExit.pop()(isSuccess);
     }
     this.linkHintsMode = this.localHints = null;
-      // Remove the bounding box
-    const box = document.getElementById('vimiumBoundingBox');
-    if (box) {
-      box.parentNode.removeChild(box);
-    }
   },
 };
 
@@ -510,8 +479,6 @@ class LinkHintsMode {
       const el = DomUtils.createElement("div");
       el.style.left = localHint.rect.left + "px";
       el.style.top = localHint.rect.top + "px";
-      // el.style.left = localHint.rect.left + 50 + "px";
-      // el.style.top = localHint.rect.top - 10 + "px";
       // Each hint marker is assigned a different z-index.
       el.style.zIndex = this.getNextZIndex();
       el.className = "vimiumReset internalVimiumHintMarker vimiumHintMarker";
@@ -530,12 +497,6 @@ class LinkHintsMode {
 
   // Handles all keyboard events.
   onKeyDownInMode(event) {
-    // if (event.key === 'Escape') {
-    //   const box = document.getElementById('vimiumBoundingBox');
-    //   if (box) {
-    //     box.parentNode.removeChild(box);
-    //   }
-    // }
     if (event.repeat) return;
 
     // NOTE(smblott) The modifier behaviour here applies only to alphabet hints.
@@ -718,74 +679,75 @@ class LinkHintsMode {
   // When only one hint remains, activate it in the appropriate way. The current frame may or may
   // not contain the matched link, and may or may not have the focus. The resulting four cases are
   // accounted for here by selectively pushing the appropriate HintCoordinator.onExit handlers.
-  // activateLink(linkMatched, userMightOverType) {
-  //   let clickEl;
-  //   if (userMightOverType == null) {
-  //     userMightOverType = false;
-  //   }
-  //   this.removeHintMarkers();
+  activateLink(linkMatched, userMightOverType) {
+    let clickEl;
+    if (userMightOverType == null) {
+      userMightOverType = false;
+    }
+    this.removeHintMarkers();
 
-  //   if (linkMatched.isLocalMarker()) {
-  //     const localHint = linkMatched.localHint;
-  //     clickEl = localHint.element;
-  //     HintCoordinator.onExit.push((isSuccess) => {
-  //       if (isSuccess) {
-  //         if (localHint.reason === "Frame.") {
-  //           return Utils.nextTick(() => focusThisFrame({ highlight: true }));
-  //         } else if (localHint.reason === "Scroll.") {
-  //           // Tell the scroller that this is the activated element.
-  //           return handlerStack.bubbleEvent(Utils.isFirefox() ? "click" : "DOMActivate", {
-  //             target: clickEl,
-  //           });
-  //         } else if (localHint.reason === "Open.") {
-  //           return clickEl.open = !clickEl.open;
-  //         } else if (DomUtils.isSelectable(clickEl)) {
-  //           window.focus();
-  //           return DomUtils.simulateSelect(clickEl);
-  //         } else {
-  //           const clickActivator = (modifiers) => (link) => DomUtils.simulateClick(link, modifiers);
-  //           const linkActivator = this.mode.linkActivator != null
-  //             ? this.mode.linkActivator
-  //             : clickActivator(this.mode.clickModifiers);
-  //           // Note(gdh1995): Here we should allow special elements to get focus,
-  //           // <select>: latest Chrome refuses `mousedown` event, and we can only focus it to let
-  //           //     user press space to activate the popup menu
-  //           // <object> & <embed>: for Flash games which have their own key event handlers since we
-  //           //     have been able to blur them by pressing `Escape`
-  //           if (["input", "select", "object", "embed"].includes(clickEl.nodeName.toLowerCase())) {
-  //             clickEl.focus();
-  //           }
-  //           return linkActivator(clickEl);
-  //         }
-  //       }
-  //     });
-  //   }
+    if (linkMatched.isLocalMarker()) {
+      const localHint = linkMatched.localHint;
+      clickEl = localHint.element;
+      HintCoordinator.onExit.push((isSuccess) => {
+        if (isSuccess) {
+          if (localHint.reason === "Frame.") {
+            return Utils.nextTick(() => focusThisFrame({ highlight: true }));
+          } else if (localHint.reason === "Scroll.") {
+            // Tell the scroller that this is the activated element.
+            return handlerStack.bubbleEvent(Utils.isFirefox() ? "click" : "DOMActivate", {
+              target: clickEl,
+            });
+          } else if (localHint.reason === "Open.") {
+            return clickEl.open = !clickEl.open;
+          } else if (DomUtils.isSelectable(clickEl)) {
+            window.focus();
+            return DomUtils.simulateSelect(clickEl);
+          } else {
+            const clickActivator = (modifiers) => (link) => DomUtils.simulateClick(link, modifiers);
+            const linkActivator = this.mode.linkActivator != null
+              ? this.mode.linkActivator
+              : clickActivator(this.mode.clickModifiers);
+            // Note(gdh1995): Here we should allow special elements to get focus,
+            // <select>: latest Chrome refuses `mousedown` event, and we can only focus it to let
+            //     user press space to activate the popup menu
+            // <object> & <embed>: for Flash games which have their own key event handlers since we
+            //     have been able to blur them by pressing `Escape`
+            if (["input", "select", "object", "embed"].includes(clickEl.nodeName.toLowerCase())) {
+              clickEl.focus();
+            }
+            return linkActivator(clickEl);
+          }
+        }
+      });
+    }
 
-  //   // If flash elements are created, then this function can be used later to remove them.
-  //   let removeFlashElements = function () {};
-  //   if (linkMatched.isLocalMarker()) {
-  //     const { top: viewportTop, left: viewportLeft } = DomUtils.getViewportTopLeft();
-  //     const flashElements = Array.from(clickEl.getClientRects()).map((rect) =>
-  //       DomUtils.addFlashRect(Rect.translate(rect, viewportLeft, viewportTop))
-  //     );
-  //     removeFlashElements = () => flashElements.map((flashEl) => DomUtils.removeElement(flashEl));
-  //   }
+    // If flash elements are created, then this function can be used later to remove them.
+    let removeFlashElements = function () {};
+    if (linkMatched.isLocalMarker()) {
+      const { top: viewportTop, left: viewportLeft } = DomUtils.getViewportTopLeft();
+      const flashElements = Array.from(clickEl.getClientRects()).map((rect) =>
+        DomUtils.addFlashRect(Rect.translate(rect, viewportLeft, viewportTop))
+      );
+      removeFlashElements = () => flashElements.map((flashEl) => DomUtils.removeElement(flashEl));
+    }
 
-  //   // If we're using a keyboard blocker, then the frame with the focus sends the "exit" message,
-  //   // otherwise the frame containing the matched link does.
-  //   if (userMightOverType) {
-  //     HintCoordinator.onExit.push(removeFlashElements);
-  //     if (windowIsFocused()) {
-  //       const callback = (isSuccess) => HintCoordinator.sendMessage("exit", { isSuccess });
-  //       return Settings.get("waitForEnterForFilteredHints")
-  //         ? new WaitForEnter(callback)
-  //         : new TypingProtector(200, callback);
-  //     }
-  //   } else if (linkMatched.isLocalMarker()) {
-  //     Utils.setTimeout(400, removeFlashElements);
-  //     return HintCoordinator.sendMessage("exit", { isSuccess: true });
-  //   }
-  // }
+    // If we're using a keyboard blocker, then the frame with the focus sends the "exit" message,
+    // otherwise the frame containing the matched link does.
+    if (userMightOverType) {
+      HintCoordinator.onExit.push(removeFlashElements);
+      if (windowIsFocused()) {
+        const callback = (isSuccess) => HintCoordinator.sendMessage("exit", { isSuccess });
+        return Settings.get("waitForEnterForFilteredHints")
+          ? new WaitForEnter(callback)
+          : new TypingProtector(200, callback);
+      }
+    } else if (linkMatched.isLocalMarker()) {
+      Utils.setTimeout(400, removeFlashElements);
+      return HintCoordinator.sendMessage("exit", { isSuccess: true });
+    }
+  }
+
   activateLink(linkMatched, userMightOverType) {
     if (linkMatched.isLocalMarker()) {
       const localHint = linkMatched.localHint;
@@ -793,7 +755,6 @@ class LinkHintsMode {
   
       // Create a bounding box
       const box = document.createElement('div');
-      box.id = 'vimiumBoundingBox'; // Assign an id to the bounding box
       box.style.position = 'absolute';
       box.style.top = `${rect.top}px`;
       box.style.left = `${rect.left}px`;
