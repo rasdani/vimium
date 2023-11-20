@@ -748,24 +748,6 @@ class LinkHintsMode {
     }
   }
 
-  activateLink(linkMatched, userMightOverType) {
-    if (linkMatched.isLocalMarker()) {
-      const localHint = linkMatched.localHint;
-      const rect = localHint.rect;
-  
-      // Create a bounding box
-      const box = document.createElement('div');
-      box.style.position = 'absolute';
-      box.style.top = `${rect.top}px`;
-      box.style.left = `${rect.left}px`;
-      box.style.width = `${rect.width}px`;
-      box.style.height = `${rect.height}px`;
-      box.style.border = '3px solid red';
-      box.style.boxSizing = 'border-box';
-      box.style.pointerEvents = 'none';
-      document.body.appendChild(box);
-    }
-  }
 
   // Shows the marker, highlighting matchingCharCount characters.
   showMarker(linkMarker, matchingCharCount) {
