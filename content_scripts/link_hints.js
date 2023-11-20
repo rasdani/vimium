@@ -478,7 +478,8 @@ class LinkHintsMode {
       const localHint = HintCoordinator.getLocalHint(desc);
       const el = DomUtils.createElement("div");
       el.style.left = localHint.rect.left + "px";
-      el.style.top = localHint.rect.top + "px";
+      // el.style.top = localHint.rect.top + "px";
+      el.style.top = (localHint.rect.top - 15) + "px";
       // Each hint marker is assigned a different z-index.
       el.style.zIndex = this.getNextZIndex();
       el.className = "vimiumReset internalVimiumHintMarker vimiumHintMarker";
