@@ -271,7 +271,7 @@ const HintCoordinator = {
 
 
     // Send JSON to webserver
-    fetch('http://localhost:5000', {
+    fetch('http://localhost:5000/bboxes', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -290,6 +290,7 @@ const HintCoordinator = {
       box.style.border = '3px solid red';
       box.style.boxSizing = 'border-box';
       box.style.pointerEvents = 'none';
+      box.className = 'myBoundingBox';
       document.body.appendChild(box);
     });
 
@@ -325,6 +326,13 @@ const HintCoordinator = {
       this.onExit.pop()(isSuccess);
     }
     this.linkHintsMode = this.localHints = null;
+
+      // Add code to remove all bounding boxes.
+    const boundingBoxes = document.querySelectorAll('myBoundingBox'); // Replace 'div' with the appropriate selector for your bounding boxes.
+    boundingBoxes.forEach(box => {
+      box.parentNode.removeChild(box);
+      });
+
   },
 };
 
@@ -688,6 +696,15 @@ class LinkHintsMode {
     this.removeHintMarkers();
 
     if (linkMatched.isLocalMarker()) {
+
+      fetch('http://localhost:5000/hintString', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ hintString: linkMatched.hintString })
+      }).catch(error => console.error('Error:', error));
+
       const localHint = linkMatched.localHint;
       clickEl = localHint.element;
       HintCoordinator.onExit.push((isSuccess) => {
