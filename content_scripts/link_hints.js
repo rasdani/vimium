@@ -280,19 +280,19 @@ const HintCoordinator = {
     }).catch(error => console.error('Error:', error));
 
     // Render bounding boxes around clickable elements
-    rectangleCoordinatesArray.forEach((rect, index) => {
-      const box = document.createElement('div');
-      box.style.position = 'absolute';
-      box.style.top = `${rect.top}px`;
-      box.style.left = `${rect.left}px`;
-      box.style.width = `${rect.width}px`;
-      box.style.height = `${rect.height}px`;
-      box.style.border = '3px solid red';
-      box.style.boxSizing = 'border-box';
-      box.style.pointerEvents = 'none';
-      box.className = 'myBoundingBox';
-      document.body.appendChild(box);
-    });
+    // rectangleCoordinatesArray.forEach((rect, index) => {
+    //   const box = document.createElement('div');
+    //   box.style.position = 'absolute';
+    //   box.style.top = `${rect.top}px`;
+    //   box.style.left = `${rect.left}px`;
+    //   box.style.width = `${rect.width}px`;
+    //   box.style.height = `${rect.height}px`;
+    //   box.style.border = '3px solid red';
+    //   box.style.boxSizing = 'border-box';
+    //   box.style.pointerEvents = 'none';
+    //   box.className = 'myBoundingBox';
+    //   document.body.appendChild(box);
+    // });
 
     // Replay keydown events which we missed (but for filtered hints only).
     if (Settings.get("filterLinkHints" && this.cacheAllKeydownEvents)) {
